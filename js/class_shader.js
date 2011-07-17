@@ -8,12 +8,12 @@ var Shader = (function(){
     
     // Fetches the default shaders.
     s.getDefault = function(callback){
-        api.call( 'GetShader', {
-                name    : 'Default',
-                success : function(data){
-                    callback( new s( data ) );
-                }
-            });
+        api( 'GetShader', {
+            name    : 'Default',
+            success : function(data){
+                callback( new s( data ) );
+            }
+        });
     };
 
 return s;

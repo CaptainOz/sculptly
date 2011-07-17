@@ -4,10 +4,14 @@ var api = (function(){
 
     function api( command, data )
     {
+        // Update the data object with the parameters.
         var success = data.success;
         delete data.success;
+        data.command = command;
+
         $.ajax( API_URI, {
-            data    : data
+            type    : 'POST',
+            data    : data,
             success : function(result){ api_success( result, success ); }
         });
     }
