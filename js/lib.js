@@ -1,4 +1,5 @@
 
+
 // Handy type checking functions
 function exists( o )
 {

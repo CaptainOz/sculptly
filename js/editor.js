@@ -1,29 +1,25 @@
 
 var editor = {};
 $(function(){
+
+try{
+
     // Is canvas supported?
     if( !isFunction( $('canvas')[0].getContext ) )
-    {
-        $('#content').html( '<a>', {
-            href : 'http://www.google.com/chrome',
-            text : 'Please upgrade your browser.'
-        });
-        return {};
-    }
+        throw new Error( 'Canvas is unsupported on this browser' );
 
-    $('canvas.viewport').drawRect({
-        fillStyle : 'rgb( 200, 0, 0 )',
-        x : 10, y : 10,
-        width  : 55,
-        height : 50,
-        fromCenter : false
-    }).drawRect({
-        fillStyle : 'rgba( 0, 0, 200, 0.5 )',
-        x : 30, y : 30,
-        width  : 55,
-        height : 50,
-        fromCenter : false
+    editor.viewports = [];
+    $('canvas.viewport').each(function(){
+        editor.viewports.push( new Viewport({
+            canvas : $(this)
+        }));
     });
+
+}
+catch( e ){
+    slog( e );
+    // TODO: Add some sort of error banner.
+}
 
 }); // end editor on ready
 
