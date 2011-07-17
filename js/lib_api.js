@@ -19,6 +19,7 @@ var api = (function(){
     function api_success( data, callback )
     {
         // TODO: Add profiling info.
+        // TODO: Add error checking/handling.
         callback( data );
     }
 
