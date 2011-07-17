@@ -11,21 +11,19 @@ $(function(){
         return {};
     }
 
-    // Set up the viewport contexts
-    editor.$viewports = $('canvas.viewport');
-    editor.contexts = [];
-    editor.$viewports.each(function(){
-            // TODO: Add viewport type checking support (i.e. orthagonal,
-            //       perspective, 3d, 2d)
-            editor.contexts.push( this.getContext( '2d' ) );
-        });
-
-    var ctx = editor.contexts[0];
-    ctx.fillStyle = 'rgb( 200, 0, 0 )';
-    ctx.fillRect( 10, 10, 55, 50 );
-    
-    ctx.fillStyle = 'rgba( 0, 0, 200, 0.5 )';
-    ctx.fillRect( 30, 30, 55, 50 );
+    $('canvas.viewport').drawRect({
+        fillStyle : 'rgb( 200, 0, 0 )',
+        x : 10, y : 10,
+        width  : 55,
+        height : 50,
+        fromCenter : false
+    }).drawRect({
+        fillStyle : 'rgba( 0, 0, 200, 0.5 )',
+        x : 30, y : 30,
+        width  : 55,
+        height : 50,
+        fromCenter : false
+    });
 
 }); // end editor on ready
 
