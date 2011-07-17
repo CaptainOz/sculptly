@@ -1,4 +1,11 @@
 
+// Global constants
+var C = {};
+C.PROTOCOL = 'http://';
+C.DOMAIN   = 'api.evecms.net';
+C.URI      = '/sculptly';
+C.URL      = C.PROTOCOL + C.DOMAIN + C.URI;
+
 
 // Handy type checking functions
 function exists( o )
