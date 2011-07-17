@@ -18,6 +18,15 @@ function slog( message )
         console.log( message );
 }
 
-
+// Cross browser compatability
+if( !exists( Function.prototype.bind ) )
+    Function.prototype.bind = function( obj ){
+        var args = arguments.slice( 1 );
+        var bound = function(){
+            return self.apply( obj, args );
+        };
+        bound.prototype = this.prototype;
+        return bound;
+    };
 
 

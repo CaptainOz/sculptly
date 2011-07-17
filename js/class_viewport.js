@@ -1,4 +1,5 @@
 
+// TODO: Document Viewport class
 var Viewport = (function(){
     var CX_WEBGL = 'webgl';
     var EX_WEBGL = 'experimental-webgl';
@@ -27,7 +28,7 @@ var Viewport = (function(){
         this.clear();
 
         // Get and attach a default shader
-        this.attachShader( Shader.getDefault() );
+        Shader.getDefault( this.attachShader.bind(this) );
     }
 
     // Clears the viewport.
