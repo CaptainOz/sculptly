@@ -1,6 +1,6 @@
 
 var api = (function(){
-    var API_URI = C.URI+'/api';
+    var API_URI = C.URI+'/api.php';
 
     function api( command, data )
     {
