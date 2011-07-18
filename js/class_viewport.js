@@ -39,25 +39,7 @@ var Viewport = (function(){
 
     // Attaches the given shader to the viewport
     v.prototype.attachShader = function( shaders ){
-        var cx = this._context;
-        var s  = cx.createProgram();
-        
-        // TODO: Remove old shaders here
-        
-        // Attach each of the shaders we're passed and then link.
-        $.each( shaders, function( type, shader ){
-            cx.attachShader( s, shader );
-        });
-        cx.linkProgram( s );
-
-        // Did the link work?
-        if( !cx.getProgramParameter( s, cx.LINK_STATUS ) )
-            throw new Error( 'Failed to link shader' );
-
-        // Link worked, lets use it
-        cx.useProgram( s );
-        var vertPosAttr = cx.getAttribLocation( s, 'aVertexPosition' );
-        cx.enableVertexAttribArray( vertPosAttr );
+        shaders.attach( this._context );
     };
 
 return v;
