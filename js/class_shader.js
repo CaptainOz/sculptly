@@ -10,7 +10,6 @@ var Shader = (function(){
     s.getDefault = function(callback){
         api( 'GetShader', {
             name    : 'Default',
-            async   : !isFunction( callback ),
             success : function(data){
                 callback( new s( data ) );
             }

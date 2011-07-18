@@ -29,6 +29,12 @@ var Viewport = (function(){
 
         // Get and attach a default shader
         Shader.getDefault( this.attachShader.bind(this) );
+
+        // Update the size information about the viewport and initialize our
+        // draw buffers.
+        this.resize();
+        this._initBuffers();
+        this.draw();
     }
 
     // Clears the viewport.
@@ -41,6 +47,47 @@ var Viewport = (function(){
     v.prototype.attachShader = function( shaders ){
         shaders.attach( this._context );
     };
+
+    // Handles resizing the render area.
+    v.prototype.resize = function( width, height ){
+        if( isNumber( width ) && isNumber( height ) ){
+            // TODO: Resize the canvas here
+        }
+        else {
+            width =  this._canvas.width();
+            height = this._canvas.height();
+        }
+
+        // Update our size cache
+        this._size = {
+            width  : width,
+            height : height,
+            aspect : height / width
+        };
+    };
+
+    // Initializes the draw buffer (private)
+    v.prototype._initBuffers = function(){
+        // Initialize the buffer
+        var cx = this._context;
+        this._vertBuffer = cx.createBuffer();
+        cx.bindBuffer( cx.ARRAY_BUFFER, this._vertBuffer );
+
+        // Create our verticies
+        var verts = [
+            1.0, 1.0, 0.0,
+           -1.0, 1.0, 0.0,
+            1.0,-1.0, 0.0,
+           -1.0,-1.0, 0.0
+        ];
+        cx.bufferData(
+            cx.ARRAY_BUFFER,
+            new Float32Array( verts ),
+            cx.STATIC_DRAW
+        );
+    };
+
+    // 
 
 return v;
 })(); // end Viewport
