@@ -3,6 +3,7 @@
 // TODO: Add strict error handling
 // TODO: Add error code constants
 // TODO: Add file path constants
+// TODO: Add cleanFilePath function
 
 try{
 
@@ -11,7 +12,7 @@ try{
     // See if the command exists
     if( !isset( $_REQUEST['command'] ) )
         throw new Exception( 'Missing command' );
-    $command = 'api'.preg_replace( '/[^\w]/', '_', strtolower( $_REQUEST['command'] ) );
+    $command = 'api_'.preg_replace( '/[^\w]/', '_', strtolower( $_REQUEST['command'] ) );
     $commandFile = "commands/$command.php";
     if( !file_exists( $commandFile ) )
         throw new Exception( 'Unknown command' );
@@ -24,6 +25,7 @@ try{
     echo json_encode( $response );
 }
 catch( Exception $e ){
+    echo $e->getMessage();
     // TODO: Add error handling here.
 }
 
