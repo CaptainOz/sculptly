@@ -18,7 +18,8 @@ function api_getshader( $request )
     while( ($filename = readdir( $shaderDir )) !== false ){
         if( !preg_match( '/(\w+)\.shader$/', $filename, $matches ) )
             continue;
-        $shaders[ $matches[1] ] = file_get_contents( $dirName.$filename );
+        $shaderContents = file_get_contents( $dirName.$filename );
+        $shaders[ $matches[1] ] = trim($shaderContents);
     }
     closedir( $shaderDir );
     
