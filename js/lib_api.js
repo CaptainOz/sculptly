@@ -6,6 +6,7 @@ var api = (function(){
     {
         // Update the data object with the parameters.
         var success = data.success;
+        var async   = true;
         delete data.success;
         data.command = command;
 

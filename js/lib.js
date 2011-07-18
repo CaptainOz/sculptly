@@ -8,19 +8,19 @@ C.URL      = C.PROTOCOL + C.DOMAIN + C.URI;
 
 
 // Handy type checking functions
-function exists( o )
-{
+function exists( o ){
     var a;
     return a !== o;
 }
-function isFunction( o )
-{
+function isFunction( o ){
     return o instanceof Function || typeof o == 'function';
+}
+function isNumber( o ){
+    return o instanceof Number || !isNaN( o );
 }
 
 // Safe logging function
-function slog( message )
-{
+function slog( message ){
     if( exists( window.console ) && isFunction( console.log ) )
         console.log( message );
 }
