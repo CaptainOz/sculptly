@@ -4,16 +4,25 @@ var Shader = (function(){
     function s( args )
     {
         this._shaders = $.extend( {}, args );
+        this._program = null;
     }
     
     // Fetches the default shaders.
     s.getDefault = function(callback){
+        var shader = null;
         api( 'GetShader', {
-            name    : 'Default',
+            name    : 'Default'
+        },{
+            async   : isFunction( callback ),
             success : function(data){
-                callback( new s( data ) );
+                if( isFunction(callback) )
+                    callback( new s( data ) );
+                else
+                    shader = new s( data );
             }
         });
+        slog( shader );
+        return shader;
     };
 
     // Attaches the shaders to the given context
@@ -52,6 +61,12 @@ var Shader = (function(){
         cx.useProgram( prog );
         var vertPosAttr = cx.getAttribLocation( prog, 'aVertexPosition' );
         cx.enableVertexAttribArray( vertPosAttr );
+        this._program = prog;
+    };
+
+    // Gets the shader program
+    s.prototype.getProgram = function(){
+        return this._program;
     };
 
 return s;

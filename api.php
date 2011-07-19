@@ -19,10 +19,15 @@ try{
 
     // Load the file and call the command
     include_once( $commandFile );
-    $response = $command( $_REQUEST );
-    
+    $data = $command( $_REQUEST );
+
+    $result = array(
+            // TODO: Insert result code here
+            'data' => $data
+        );
+
     header( 'Content-type: text/json' );
-    echo json_encode( $response );
+    echo json_encode( $result );
 }
 catch( Exception $e ){
     echo $e->getMessage();

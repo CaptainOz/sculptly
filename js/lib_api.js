@@ -2,26 +2,29 @@
 var api = (function(){
     var API_URI = C.URI+'/api.php';
 
-    function api( command, data )
+    function api( command, data, options )
     {
-        // Update the data object with the parameters.
-        var success = data.success;
-        var async   = true;
-        delete data.success;
+        if( !isObject( options ) )
+            options = {};
         data.command = command;
+
+        slog( options );
 
         $.ajax( API_URI, {
             type    : 'POST',
             data    : data,
-            success : function(result){ api_success( result, success ); }
+            async   : exists(options.async) ? Boolean(options.async) : true,
+            context : options,
+            success : api_success
         });
     }
 
-    function api_success( data, callback )
+    function api_success( result )
     {
         // TODO: Add profiling info.
         // TODO: Add error checking/handling.
-        callback( data );
+        slog( result );
+        this.success( result.data );
     }
 
 return api;
