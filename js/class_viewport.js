@@ -8,17 +8,16 @@ var Viewport = (function(){
 
     // Matrixes:
     // _m : This attribute stores all the matrices.
-    // t  : Translation
+    // t  : Transformations
     // p  : Perspective
-    // r  : Rotation
-    // s  : Scale
+    // s  : Transformation stack
 
     function v( args )
     {
         // Initialize some of our member data
         this._canvas  = args.canvas;
         this._context = this._canvas[0].getContext( gl_3D );
-        this._m = {};
+        this._m = { s : [] };
 
         if( !this._context )
         {
@@ -109,10 +108,9 @@ var Viewport = (function(){
         this.resetTranslate();
         this.translate( 0.0, 0.0, -6.0 );
 
+        this.e.rotate( 4, 1, 0, 1 );
         this.e.draw();
 
-        this._setMatrixUniforms();
-        gl.drawArrays( gl.TRIANGLE_STRIP, 0, 4 );
     };
 
     // Resets the translation matrix
@@ -138,6 +136,22 @@ var Viewport = (function(){
         gl.uniformMatrix4fv( mUni, false, this._m.t.toF32Array() );
     };
 
+    // Pushes a new matrix onto the transformation stack
+    v.prototype.pushMatrix = function(){
+        this._m.s.push( this._m.t.dup() );
+    };
+
+    // Pops the top transformation from the stack
+    v.prototype.popMatrix = function(){
+        if( !this._m.s.length )
+            throw new Error( 'Transformation stack empty, nothing to pop' );
+        this._m.t = this._m.s.pop();
+        return this._m.t;
+    };
+
+    v.prototype.applyTransformations = function( transMatrix ){
+        this._m.t = this._m.t.x( transMatrix );
+    };
 
     // --- Helper Functions --- //
 
@@ -235,101 +249,6 @@ var Viewport = (function(){
             [0, 0, 0, 1]
         ]);
     }
-
-
-    // --- Sylvester augmentation --- //
-
-
-    Matrix.Translation = function( v ){
-        // 2 x 2
-        if( v.elements.length == 2 ){
-            var r = Matrix.I(3);
-            r.elements[2][0] = v.elements[0];
-            r.elements[2][1] = v.elements[1];
-            return r;
-        }
-
-        // 3 x 3
-        else if( v.elements.length == 3 ){
-            var r = Matrix.I(4);
-            r.elements[0][3] = v.elements[0];
-            r.elements[1][3] = v.elements[1];
-            r.elements[2][3] = v.elements[2];
-            return r;
-        }
-
-        // Error x Error
-        else
-            throw new Error('Invalid length for Translation');
-    };
-
-    Matrix.prototype.flatten = function(){
-        var result = [];
-        if( this.elements.length == 0 )
-            return [];
-
-        for( var j = 0; j < this.elements[0].length; j++ )
-            for( var i = 0; i < this.elements.length; i++ )
-                result.push( this.elements[i][j] );
-        return result;
-    };
-
-    Matrix.prototype.ensure4x4 = function(){
-        // Already a 4x4? Return.
-        if (this.elements.length    == 4 &&
-            this.elements[0].length == 4)
-            return this;
-
-        // Greater than 4x4? Can't fix it!
-        if (this.elements.length > 4 ||
-            this.elements[0].length > 4)
-            return null;
-
-        // Less than 4 wide? Pad out the columns
-        for( var i = 0; i < this.elements.length; i++ ){
-            for( var j = this.elements[i].length; j < 4; j++ ){
-                if( i == j )
-                    this.elements[i].push(1);
-                else
-                    this.elements[i].push(0);
-            }
-        }
-
-        // Less than for high? Pad extra rows
-        for(var i = this.elements.length; i < 4; i++ ){
-            if( i == 0 )
-                this.elements.push([1, 0, 0, 0]);
-            else if( i == 1 )
-                this.elements.push([0, 1, 0, 0]);
-            else if( i == 2 )
-                this.elements.push([0, 0, 1, 0]);
-            else if( i == 3 )
-                this.elements.push([0, 0, 0, 1]);
-        }
-
-        // We good.
-        return this;
-    };
-
-    Matrix.prototype.make3x3 = function(){
-        if( this.elements.length    != 4 ||
-            this.elements[0].length != 4 )
-            return null;
-
-        return Matrix.create([
-            [this.elements[0][0], this.elements[0][1], this.elements[0][2]],
-            [this.elements[1][0], this.elements[1][1], this.elements[1][2]],
-            [this.elements[2][0], this.elements[2][1], this.elements[2][2]]
-        ]);
-    };
-
-    Matrix.prototype.toF32Array = function(){
-        return new Float32Array( this.flatten() );
-    };
-
-    Vector.prototype.flatten = function(){
-        return this.elements;
-    };
 
 return v;
 })(); // end Viewport
