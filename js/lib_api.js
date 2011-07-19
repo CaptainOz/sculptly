@@ -8,8 +8,6 @@ var api = (function(){
             options = {};
         data.command = command;
 
-        slog( options );
-
         $.ajax( API_URI, {
             type    : 'POST',
             data    : data,
@@ -23,7 +21,6 @@ var api = (function(){
     {
         // TODO: Add profiling info.
         // TODO: Add error checking/handling.
-        slog( result );
         this.success( result.data );
     }
 

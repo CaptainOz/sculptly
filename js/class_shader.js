@@ -21,7 +21,6 @@ var Shader = (function(){
                     shader = new s( data );
             }
         });
-        slog( shader );
         return shader;
     };
 
