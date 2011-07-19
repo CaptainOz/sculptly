@@ -23,6 +23,9 @@ function isObject( o ){
 function isBoolean( o ){
     return Boolean(o instanceof Boolean || typeof o == 'boolean');
 }
+function isArray( o ){
+    return Boolean(o instanceof Array);
+}
 
 // Safe logging function
 function slog( message ){
