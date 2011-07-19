@@ -59,9 +59,13 @@ var Shader = (function(){
 
         // Link up, lets use it
         gl.useProgram( prog );
-        var vertPosAttr = this.getLocAttr( 'aVertexPosition' );
-        gl.enableVertexAttribArray( vertPosAttr );
         this._program = prog;
+
+        // Enable the vertex attributes
+        var vertPosAttr = this.getAttrLoc( 'aVertexPosition' );
+        gl.enableVertexAttribArray( vertPosAttr );
+        var vertColAttr = this.getAttrLoc( 'aVertexColor' );
+        gl.enableVertexAttribArray( vertColAttr );
     };
 
     // Gets the shader program
@@ -69,7 +73,7 @@ var Shader = (function(){
         return this._program;
     };
 
-    s.prototype.getLocAttr = function( name ){
+    s.prototype.getAttrLoc = function( name ){
         return this._context.getAttribLocation( this._program, name );
     };
 
