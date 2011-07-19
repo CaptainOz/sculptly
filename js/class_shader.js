@@ -26,6 +26,7 @@ var Shader = (function(){
 
     // Attaches the shaders to the given context
     s.prototype.attach = function( cx ){
+        this._context = cx;
         var prog = cx.createProgram();
         $.each( this._shaders, function( type, source ){
 
@@ -58,7 +59,7 @@ var Shader = (function(){
 
         // Link up, lets use it
         cx.useProgram( prog );
-        var vertPosAttr = cx.getAttribLocation( prog, 'aVertexPosition' );
+        var vertPosAttr = this.getLocAttr( 'aVertexPosition' );
         cx.enableVertexAttribArray( vertPosAttr );
         this._program = prog;
     };
@@ -66,6 +67,10 @@ var Shader = (function(){
     // Gets the shader program
     s.prototype.getProgram = function(){
         return this._program;
+    };
+
+    s.prototype.getLocAttr = function( name ){
+        return this._context.getAttribLocation( this._program, name );
     };
 
 return s;
