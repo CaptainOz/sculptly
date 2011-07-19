@@ -13,18 +13,12 @@ var Viewport = (function(){
     // r  : Rotation
     // s  : Scale
 
-    // Buffers:
-    // _b : This attribute stores all the buffers.
-    // v  : Vertex
-    // c  : Color
-
     function v( args )
     {
         // Initialize some of our member data
         this._canvas  = args.canvas;
         this._context = this._canvas[0].getContext( gl_3D );
         this._m = {};
-        this._b = {};
 
         if( !this._context )
         {
@@ -86,40 +80,22 @@ var Viewport = (function(){
     v.prototype._initBuffers = function(){
         // Initialize the vertex buffer
         var gl = this._context;
-        this._b.v = gl.createBuffer();
-        gl.bindBuffer( gl.ARRAY_BUFFER, this._b.v );
 
-        // Create our verticies
-        var verts = [
+        this.e = new Entity( this );
+        this.e.setVerticies([
         //   x    y    z
             1.0, 1.0, 0.0,
            -1.0, 1.0, 0.0,
             1.0,-1.0, 0.0,
            -1.0,-1.0, 0.0
-        ];
-        gl.bufferData(
-            gl.ARRAY_BUFFER,
-            new Float32Array( verts ),
-            gl.STATIC_DRAW
-        );
-
-        // Initialize the color buffer
-        this._b.c = gl.createBuffer();
-        gl.bindBuffer( gl.ARRAY_BUFFER, this._b.c );
-        
-        // Create our vertex colors
-        var colors = [
+        ]);
+        this.e.setColors([
         //   r    g    b    a
             1.0, 1.0, 1.0, 1.0,
             1.0, 0.0, 0.0, 1.0,
             0.0, 1.0, 0.0, 1.0,
             0.0, 0.0, 1.0, 1.0
-        ];
-        gl.bufferData(
-            gl.ARRAY_BUFFER,
-            new Float32Array( colors ),
-            gl.STATIC_DRAW
-        );
+        ]);
     };
 
     // Draws our current vertex buffer
@@ -133,13 +109,8 @@ var Viewport = (function(){
         this.resetTranslate();
         this.translate( 0.0, 0.0, -6.0 );
 
-        // Draw our verticies.
-        var vertPosAttr = this._shader.getAttrLoc( 'aVertexPosition' );
-        gl.bindBuffer( gl.ARRAY_BUFFER, this._b.v );
-        gl.vertexAttribPointer( vertPosAttr, 3, gl.FLOAT, false, 0, 0 );
-        var vertColAttr = this._shader.getAttrLoc( 'aVertexColor' );
-        gl.bindBuffer( gl.ARRAY_BUFFER, this._b.c );
-        gl.vertexAttribPointer( vertColAttr, 4, gl.FLOAT, false, 0, 0 );
+        this.e.draw();
+
         this._setMatrixUniforms();
         gl.drawArrays( gl.TRIANGLE_STRIP, 0, 4 );
     };
