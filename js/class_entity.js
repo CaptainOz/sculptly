@@ -5,6 +5,7 @@ var Entity = (function(){
     // _b : This attribute stores all the buffers.
     // v  : Vertex
     // c  : Color
+    // e  : Elements
 
     function Entity( scene ){
         this._scene = scene;
@@ -13,15 +14,21 @@ var Entity = (function(){
     }
 
     // Sets the verticies that describe the entity
-    Entity.prototype.setVerticies = function( verts ){
+    Entity.prototype.setVerticies = function( verts, elements ){
         this._verts = verts;
-        this._b.v = this._createBuffer( verts );
+        this._elements = elements;
+        
+        var gl = this._scene._context;
+        this._b.v = this._createBuffer( verts, gl.ARRAY_BUFFER );
+        if( isArray( elements ) )
+            this._b.e = this._createBuffer( elements, gl.ELEMENT_ARRAY_BUFFER );
     };
 
     // Sets the colors
     Entity.prototype.setColors = function( colors ){
+        var gl = this._scene._context;
         this._colors = colors;
-        this._b.c = this._createBuffer( colors );
+        this._b.c = this._createBuffer( colors, gl.ARRAY_BUFFER );
     };
 
     // Draws the entity
@@ -42,23 +49,23 @@ var Entity = (function(){
         gl.bindBuffer( gl.ARRAY_BUFFER, this._b.c );
         gl.vertexAttribPointer( vertColAttr, 4, gl.FLOAT, false, 0, 0 );
 
+        gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, this._b.e );
         scene._setMatrixUniforms();
-        gl.drawArrays( gl.TRIANGLE_STRIP, 0, 4 );
+        gl.drawElements( gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0 );
 
         // Pop off the transformation stack
         scene.popMatrix();
     };
 
     // Creates a new buffer
-    Entity.prototype._createBuffer = function( data ){
+    Entity.prototype._createBuffer = function( data, type ){
         var gl = this._scene._context;
         var buffer = gl.createBuffer();
-        gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
-        gl.bufferData(
-            gl.ARRAY_BUFFER,
-            new Float32Array( data ),
-            gl.STATIC_DRAW
-        );
+        gl.bindBuffer( type, buffer );
+        var bdata = (type == gl.ARRAY_BUFFER)
+                  ? new Float32Array( data )
+                  : new Uint16Array( data );
+        gl.bufferData( type, bdata, gl.STATIC_DRAW );
         return buffer;
     };
 
