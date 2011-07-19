@@ -6,17 +6,22 @@ C.DOMAIN   = 'api.evecms.net';
 C.URI      = '/sculptly';
 C.URL      = C.PROTOCOL + C.DOMAIN + C.URI;
 
-
 // Handy type checking functions
 function exists( o ){
     var a;
-    return a !== o;
+    return Boolean(a !== o && o !== null);
 }
 function isFunction( o ){
-    return o instanceof Function || typeof o == 'function';
+    return Boolean(o instanceof Function || typeof o == 'function');
 }
 function isNumber( o ){
-    return o instanceof Number || !isNaN( o );
+    return Boolean(o instanceof Number || !isNaN( o ));
+}
+function isObject( o ){
+    return Boolean(typeof o == 'object' && !(o instanceof Array));
+}
+function isBoolean( o ){
+    return Boolean(o instanceof Boolean || typeof o == 'boolean');
 }
 
 // Safe logging function
