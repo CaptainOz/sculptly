@@ -79,7 +79,7 @@ var Viewport = (function(){
 
     // Initializes the draw buffer (private)
     v.prototype._initBuffers = function(){
-        // Initialize the buffer
+        // Initialize the vertex buffer
         var cx = this._context;
         this._vertBuffer = cx.createBuffer();
         cx.bindBuffer( cx.ARRAY_BUFFER, this._vertBuffer );
@@ -110,8 +110,9 @@ var Viewport = (function(){
         this.translate( 0.0, 0.0, -6.0 );
 
         // Draw our verticies.
+        var vertPosAttr = this._shader.getLocAttr( 'aVertexPosition' );
         cx.bindBuffer( cx.ARRAY_BUFFER, this._vertBuffer );
-        //cx.vertexAttribPointer( vertPosAttr, 3, cx.FLOAT, false, 0, 0 );
+        cx.vertexAttribPointer( vertPosAttr, 3, cx.FLOAT, false, 0, 0 );
         this._setMatrixUniforms();
         cx.drawArrays( cx.TRIANGLE_STRIP, 0, 4 );
     };
