@@ -37,7 +37,7 @@ var Viewport = (function(){
         this.clear();
 
         // Get and attach a default shader
-        Shader.getDefault( this.attachShader.bind(this) );
+        this.attachShader( Shader.getDefault() );
 
         // Update the size information about the viewport and initialize our
         // draw buffers.
@@ -53,8 +53,9 @@ var Viewport = (function(){
     };
 
     // Attaches the given shader to the viewport
-    v.prototype.attachShader = function( shaders ){
-        shaders.attach( this._context );
+    v.prototype.attachShader = function( shader ){
+        this._shader = shader;
+        shader.attach( this._context );
     };
 
     // Handles resizing the render area.
@@ -111,7 +112,7 @@ var Viewport = (function(){
         // Draw our verticies.
         cx.bindBuffer( cx.ARRAY_BUFFER, this._vertBuffer );
         //cx.vertexAttribPointer( vertPosAttr, 3, cx.FLOAT, false, 0, 0 );
-        setMatrixUniforms();
+        this._setMatrixUniforms();
         cx.drawArrays( cx.TRIANGLE_STRIP, 0, 4 );
     };
 
@@ -124,6 +125,18 @@ var Viewport = (function(){
     v.prototype.translate = function( x, y, z ){
         var translation = Matrix.Translation($V([x, y, z])).ensure4x4();
         this._m.t = this._m.t.x( translation );
+    };
+
+    v.prototype._setMatrixUniforms = function(){
+        // Get the shader program and uniform locations
+        var cx   = this._context;
+        var prog = this._shader.getProgram();
+        var pUni = cx.getUniformLocation( prog, 'uPMatrix' );
+        var mUni = cx.getUniformLocation( prog, 'uMVMatrix' );
+
+        // Set the uniform matrices.
+        cx.uniformMatrix4fv( pUni, false, this._m.p.toF32Array() );
+        cx.uniformMatrix4fv( mUni, false, this._m.t.toF32Array() );
     };
 
 
@@ -309,6 +322,10 @@ var Viewport = (function(){
             [this.elements[1][0], this.elements[1][1], this.elements[1][2]],
             [this.elements[2][0], this.elements[2][1], this.elements[2][2]]
         ]);
+    };
+
+    Matrix.prototype.toF32Array = function(){
+        return new Float32Array( this.flatten() );
     };
 
     Vector.prototype.flatten = function(){
