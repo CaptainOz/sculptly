@@ -1,10 +1,10 @@
 
 // TODO: Document Viewport class
 var Viewport = (function(){
-    var CX_WEBGL = 'webgl';
+    var gl_WEBGL = 'webgl';
     var EX_WEBGL = 'experimental-webgl';
-    var CX_2D    = '2d';
-    var CX_3D    = CX_WEBGL;
+    var gl_2D    = '2d';
+    var gl_3D    = gl_WEBGL;
 
     // Matrixes:
     // _m : This attribute stores all the matrices.
@@ -17,7 +17,7 @@ var Viewport = (function(){
     {
         // Initialize some of our member data
         this._canvas  = args.canvas;
-        this._context = this._canvas[0].getContext( CX_3D );
+        this._context = this._canvas[0].getContext( gl_3D );
         this._m = {};
 
         if( !this._context )
@@ -29,11 +29,11 @@ var Viewport = (function(){
 
         // Set our default state
         // TODO: Make the background color customizable
-        var cx = this._context;
-        cx.clearColor( 0.34, 0.32, 0.31, 1 ); // Dark tan
-        cx.clearDepth( 1 );          // Clear everything
-        cx.enable( cx.DEPTH_TEST );  // No Z fighting please
-        cx.depthFunc( cx.LEQUAL );
+        var gl = this._context;
+        gl.clearColor( 0.34, 0.32, 0.31, 1 ); // Dark tan
+        gl.clearDepth( 1 );          // Clear everything
+        gl.enable( gl.DEPTH_TEST );  // No Z fighting please
+        gl.depthFunc( gl.LEQUAL );
         this.clear();
 
         // Get and attach a default shader
@@ -48,8 +48,8 @@ var Viewport = (function(){
 
     // Clears the viewport.
     v.prototype.clear = function(){
-        var cx = this._context;
-        cx.clear( cx.COLOR_BUFFER_BIT | cx.DEPTH_BUFFER_BIT );
+        var gl = this._context;
+        gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
     };
 
     // Attaches the given shader to the viewport
@@ -80,9 +80,9 @@ var Viewport = (function(){
     // Initializes the draw buffer (private)
     v.prototype._initBuffers = function(){
         // Initialize the vertex buffer
-        var cx = this._context;
-        this._vertBuffer = cx.createBuffer();
-        cx.bindBuffer( cx.ARRAY_BUFFER, this._vertBuffer );
+        var gl = this._context;
+        this._vertBuffer = gl.createBuffer();
+        gl.bindBuffer( gl.ARRAY_BUFFER, this._vertBuffer );
 
         // Create our verticies
         var verts = [
@@ -91,18 +91,18 @@ var Viewport = (function(){
             1.0,-1.0, 0.0,
            -1.0,-1.0, 0.0
         ];
-        cx.bufferData(
-            cx.ARRAY_BUFFER,
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
             new Float32Array( verts ),
-            cx.STATIC_DRAW
+            gl.STATIC_DRAW
         );
     };
 
     // Draws our current vertex buffer
     v.prototype.draw = function(){
         // Clear the context
-        var cx = this._context;
-        cx.clear( cx.COLOR_BUFFER_BIT | cx.DEPTH_BUFFER_BIT );
+        var gl = this._context;
+        gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 
         // Reset the perspective matrix
         this._m.p = makePerspective( 45, this._size.vAspect, 0.1, 100 );
@@ -111,10 +111,10 @@ var Viewport = (function(){
 
         // Draw our verticies.
         var vertPosAttr = this._shader.getLocAttr( 'aVertexPosition' );
-        cx.bindBuffer( cx.ARRAY_BUFFER, this._vertBuffer );
-        cx.vertexAttribPointer( vertPosAttr, 3, cx.FLOAT, false, 0, 0 );
+        gl.bindBuffer( gl.ARRAY_BUFFER, this._vertBuffer );
+        gl.vertexAttribPointer( vertPosAttr, 3, gl.FLOAT, false, 0, 0 );
         this._setMatrixUniforms();
-        cx.drawArrays( cx.TRIANGLE_STRIP, 0, 4 );
+        gl.drawArrays( gl.TRIANGLE_STRIP, 0, 4 );
     };
 
     // Resets the translation matrix
@@ -130,14 +130,14 @@ var Viewport = (function(){
 
     v.prototype._setMatrixUniforms = function(){
         // Get the shader program and uniform locations
-        var cx   = this._context;
+        var gl   = this._context;
         var prog = this._shader.getProgram();
-        var pUni = cx.getUniformLocation( prog, 'uPMatrix' );
-        var mUni = cx.getUniformLocation( prog, 'uMVMatrix' );
+        var pUni = gl.getUniformLocation( prog, 'uPMatrix' );
+        var mUni = gl.getUniformLocation( prog, 'uMVMatrix' );
 
         // Set the uniform matrices.
-        cx.uniformMatrix4fv( pUni, false, this._m.p.toF32Array() );
-        cx.uniformMatrix4fv( mUni, false, this._m.t.toF32Array() );
+        gl.uniformMatrix4fv( pUni, false, this._m.p.toF32Array() );
+        gl.uniformMatrix4fv( mUni, false, this._m.t.toF32Array() );
     };
 
 
@@ -146,11 +146,11 @@ var Viewport = (function(){
 
     // gluLookAt
     function makeLookAt(ex, ey, ez,
-                        cx, cy, cz,
+                        gl, cy, cz,
                         ux, uy, uz)
     {
         var eye = $V([ex, ey, ez]);
-        var center = $V([cx, cy, cz]);
+        var center = $V([gl, cy, cz]);
         var up = $V([ux, uy, uz]);
 
         var mag;

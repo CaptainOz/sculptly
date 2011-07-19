@@ -25,9 +25,9 @@ var Shader = (function(){
     };
 
     // Attaches the shaders to the given context
-    s.prototype.attach = function( cx ){
-        this._context = cx;
-        var prog = cx.createProgram();
+    s.prototype.attach = function( gl ){
+        this._context = gl;
+        var prog = gl.createProgram();
         $.each( this._shaders, function( type, source ){
 
             // TODO: Remove old shaders here
@@ -35,32 +35,32 @@ var Shader = (function(){
             // Create the shader
             var shader = null;
             if( type == 'fragment' )
-                shader = cx.createShader( cx.FRAGMENT_SHADER );
+                shader = gl.createShader( gl.FRAGMENT_SHADER );
             else if( type == 'vertex' )
-                shader = cx.createShader( cx.VERTEX_SHADER );
+                shader = gl.createShader( gl.VERTEX_SHADER );
             else
                 throw new Error( 'Unknown shader type: '+type );
-            cx.shaderSource( shader, source );
-            cx.compileShader( shader );
+            gl.shaderSource( shader, source );
+            gl.compileShader( shader );
 
             // Did the shader create correctly?
-            if( !cx.getShaderParameter( shader, cx.COMPILE_STATUS ) )
+            if( !gl.getShaderParameter( shader, gl.COMPILE_STATUS ) )
                 throw new Error( 'Failed to compile shader: '
-                                +cx.getShaderInfoLog( shader ) );
+                                +gl.getShaderInfoLog( shader ) );
 
             // Attach the shader to the program.
-            cx.attachShader( prog, shader );
+            gl.attachShader( prog, shader );
         });
 
         // All shaders created and attached, link 'em up!
-        cx.linkProgram( prog );
-        if( !cx.getProgramParameter( prog, cx.LINK_STATUS ) )
+        gl.linkProgram( prog );
+        if( !gl.getProgramParameter( prog, gl.LINK_STATUS ) )
             throw new Error( 'Failed to link shader' );
 
         // Link up, lets use it
-        cx.useProgram( prog );
+        gl.useProgram( prog );
         var vertPosAttr = this.getLocAttr( 'aVertexPosition' );
-        cx.enableVertexAttribArray( vertPosAttr );
+        gl.enableVertexAttribArray( vertPosAttr );
         this._program = prog;
     };
 
