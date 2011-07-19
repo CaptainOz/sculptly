@@ -15,6 +15,10 @@ try{
         }));
     });
 
+    setInterval( function(){
+            editor.viewports[0].draw();
+        }, 33 );
+
 }
 catch( e ){
     slog( e );

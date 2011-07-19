@@ -49,7 +49,6 @@ var Viewport = (function(){
         // draw buffers.
         this.resize();
         this._initBuffers();
-        this.draw();
     }
 
     // Clears the viewport.
