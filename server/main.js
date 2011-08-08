@@ -6,5 +6,6 @@ try{
 }
 catch( e ){
     console.log( '*** Server FAILED ***' );
-    console.log( e );
+    throw e;
 }
+
