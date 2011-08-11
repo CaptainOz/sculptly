@@ -3,4 +3,5 @@
 # Starts the server
 #
 
-node main.js | logger &
+sudo nohup node main.js --sculptly | logger &
+
