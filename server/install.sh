@@ -4,15 +4,16 @@
 #
 
 # Node and prerequisits
+echo " ### Installing Node.js and prerequisits ###"
 sudo apt-add-repository ppa:chris-lea/node.js
 sudo apt-get update
 sudo apt-get -y install python-software-properties nodejs curl
 
 # Node Package Manager
-sudo sh
-curl http://npmjs.org/install.sh | sh
-exit
+echo " ### Installing NPM ###"
+curl http://npmjs.org/install.sh | sudo sh
 
 # Required Node packages
+echo " ### Installing required packages ###"
 npm install mysql
 
