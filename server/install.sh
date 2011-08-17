@@ -15,5 +15,5 @@ curl http://npmjs.org/install.sh | sudo sh
 
 # Required Node packages
 echo " ### Installing required packages ###"
-npm install mysql
+npm install mongodb
 
