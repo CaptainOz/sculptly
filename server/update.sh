@@ -12,3 +12,7 @@ npm update npm -g   # Update npm itself
 npm update -g       # Update global packages
 npm update          # Update local packages
 
+# Now update Sculptly and restart
+git pull origin master
+./server-restart.sh
+
